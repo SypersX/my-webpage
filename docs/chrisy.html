@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chrisy Status</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+<style>
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #12121c;
+    color: #eee;
+    margin: 0;
+    padding: 0;
+}
+header {
+    padding: 20px;
+    background: #1f1f2e;
+    text-align: center;
+}
+h1 { margin:0; color: #fff; font-size: 24px; }
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 20px;
+    gap: 10px;
+}
+.card {
+    background: #1f1f2e;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    padding: 20px;
+    width: 160px;
+    text-align: center;
+    transition: transform 0.2s, background 0.3s;
+}
+.card:hover { transform: scale(1.05); background: #29293d; }
+.card h3 { margin-bottom: 8px; color: #bbb; font-size: 16px; }
+.card p { font-size: 24px; font-weight: bold; color: #00d4ff; }
+
+canvas { max-width: 95%; margin: 30px auto; display:block; background:#1f1f2e; border-radius:12px; padding:15px; }
+
+@media (max-width: 600px) {
+    .card { width: 90%; }
+    h1 { font-size: 20px; }
+}
+</style>
+</head>
+<body>
+<header>
+    <h1>Chrisy Status</h1>
+</header>
+
+<section class="container" id="statusCards"></section>
+
+<h2 style="text-align:center; margin-top:20px;">Status BOT</h2>
+<canvas id="activityChart"></canvas>
+
+<script>
+const totalPercent = {
+    active_users: 75,
+    commands_executed: 60,
+    uptime: 95,
+    errors: 5
+};
+
+// สร้างการ์ด
+const container = document.getElementById('statusCards');
+Object.entries(totalPercent).forEach(([type, percent]) => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `<h3>${type.replace('_',' ').toUpperCase()}</h3><p>${percent}%</p>`;
+    container.appendChild(card);
+});
+
+const ctx = document.getElementById('activityChart').getContext('2d');
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: Object.keys(totalPercent).map(k=>k.replace('_',' ').toUpperCase()),
+        datasets: [{
+            label: 'Percentage',
+            data: Object.values(totalPercent),
+            backgroundColor: 'rgba(0,212,255,0.7)',
+            borderColor: 'rgba(0,212,255,1)',
+            borderWidth: 2,
+            borderRadius: 6
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero:true,
+                max: 100,
+                ticks: { color:'#fff', callback: v=>v+"%" }
+            },
+            x: { ticks: { color:'#fff' } }
+        },
+        plugins: {
+            legend: { labels: { color:'#fff' } }
+        }
+    }
+});
+
+let recaptchaToken = '6LdKUKorAAAAACWUKkZufaM-8NKq9PWiuPlKxyNA';
+function onRecaptchaSuccess(token){ recaptchaToken = token; }
+
+if (window.location.hash === "#install") {
+    Swal.fire({
+        title: 'Hello There',
+        html: `
+          <p>Verify You Are Human</p>
+          <div class="g-recaptcha" data-sitekey="YOUR_SITE_KEY" data-callback="onRecaptchaSuccess"></div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'Confirm',
+        preConfirm: () => {
+            if(!recaptchaToken){
+                Swal.showValidationMessage('กรุณากด reCAPTCHA ก่อน');
+                return false;
+            }
+            return new Promise(resolve=>{
+                setTimeout(()=>resolve(true),800);
+            });
+        }
+    }).then((result) => {
+        if(result.isConfirmed){
+            window.location.href = "https://discord.com/oauth2/authorize?client_id=1388806995280265237&permissions=8&integration_type=0&scope=bot";
+        }
+    });
+}
+</script>
+</body>
+</html>
