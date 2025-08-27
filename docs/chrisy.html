@@ -113,13 +113,13 @@ if (window.location.hash === "#install") {
         title: 'Hello There',
         html: `
           <p>Verify You Are Human</p>
-          <div class="g-recaptcha" data-sitekey="YOUR_SITE_KEY" data-callback="onRecaptchaSuccess"></div>
+          <div class="g-recaptcha" data-sitekey="6LfIzLQrAAAAAJ9prOX4U756XbpquqPiaua9199s" data-callback="onRecaptchaSuccess"></div>
         `,
         showCancelButton: true,
         confirmButtonText: 'Confirm',
         preConfirm: () => {
             if(!recaptchaToken){
-                Swal.showValidationMessage('กรุณากด reCAPTCHA ก่อน');
+                Swal.showValidationMessage('Please Verify You Are Human');
                 return false;
             }
             return new Promise(resolve=>{
